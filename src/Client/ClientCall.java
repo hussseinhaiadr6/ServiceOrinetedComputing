@@ -16,16 +16,16 @@ public class ClientCall {
 	/**
 	 * @param args
 	 */
-	public static String FilterTrains() {
+	public static String FilterTrains(String Start,String deprt, String depDate,String arrivDate, String Ticket, String Class) {
         // Create the client resource
         ClientResource resource = new ClientResource("http://localhost:8198/train");
         Form form = new Form();
-        form.add("departureStation", "StationA");
-        form.add("arrivalStation", "StationB");
-        form.add("departureDate", "2023-01-01");
-        form.add("arrivalDate", "2023-01-01");
-        form.add("tickets", "2");
-        form.add("travelClass", "FIRST");
+        form.add("departureStation", Start);
+        form.add("arrivalStation", deprt);
+        form.add("departureDate", depDate);
+        form.add("arrivalDate", arrivDate);
+        form.add("tickets", Ticket);
+        form.add("travelClass", Class);
 
 
 

@@ -13,13 +13,13 @@ public class Client2Call {
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	public static String reserveTrains(String id1, String id2, String Ticket, String Class) {
         // Create the client resource
-        ClientResource resource = new ClientResource("http://localhost:8198/train/T001");
+        ClientResource resource = new ClientResource("http://localhost:8198/train/"+id1);
         Form form = new Form();
-        form.add("tickets", "2");
-        form.add("travelClass", "FIRST");
-        form.add("trainID2","T004");
+        form.add("tickets", Ticket);
+        form.add("travelClass", Class);
+        form.add("trainID2",id2);
 
 
 
@@ -27,16 +27,24 @@ public class Client2Call {
             // Create a form with the needed information
                        // Send a POST request with the form
         System.out.println("trying");
-          resource.post(form).write(System.out);
+        String response = resource.post(form).getText();
           System.out.println("Done!");
+          return response;
         
 
         } catch (ResourceException e) {
             e.printStackTrace();
+            return "";
         } catch (IOException e) {
             e.printStackTrace();
+            return "";
         }
     }
+
+	public static String FilterTrains() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
  
 }

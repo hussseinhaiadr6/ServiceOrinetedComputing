@@ -5,11 +5,11 @@ import org.restlet.data.Form;
 import org.restlet.resource.ClientResource;
 import org.restlet.resource.ResourceException;
 
-public class TrainFilter {
+public class TrainReservation {
 	
-		public String sayHello(String input){
+		public String reserve(){
 			String Result ="";
-			Result=Client.ClientCall.FilterTrains("StationA","StationB","2023-01-01","2023-01-01","2","FIRST");
+			Result=Client.Client2Call.reserveTrains("T003", "T002", "1", "BUSINESS");
 			 
 		        
 		        return Result;
