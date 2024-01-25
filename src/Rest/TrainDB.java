@@ -5,12 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
-import java.util.List;
 
 public class TrainDB {
-
-    private static final String JDBC_URL = "jdbc:sqlite:C:\\Users\\User\\OneDrive\\Desktop\\mydatabase.db";
 
     public static void main(String[] args) {
         try {
@@ -21,7 +17,7 @@ public class TrainDB {
             return;
         }
 
-        try (Connection connection = DriverManager.getConnection(JDBC_URL)) {
+        try (Connection connection = DriverManager.getConnection(Constants.JDBC_URL)) {
             System.out.println("Connected to the database");
 
             try (PreparedStatement preparedStatement = connection.prepareStatement(

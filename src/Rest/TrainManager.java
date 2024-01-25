@@ -11,17 +11,22 @@ import org.restlet.resource.Post;
 import org.restlet.resource.ServerResource;
 import java.sql.*;
 public class TrainManager extends ServerResource{
-	
-	private static final String JDBC_URL = "jdbc:sqlite:C:\\Users\\User\\OneDrive\\Desktop\\mydatabase.db";
+	private RouterApplication app = (RouterApplication) getApplication();
+
 	 @Post
 	    public Representation reserveTickets(Representation entity) {
+			if (!app.authenticate(getRequest(), getResponse())) {
+	            // Not authenticated
+	            return new StringRepresentation("Please authenticate to make a booking.", MediaType.TEXT_PLAIN); 
+	        }
+			
 	        String trainId = (String) getRequestAttributes().get("TrainID");
 	        Form form = new Form(entity);
 	        String nbOfTickets = form.getFirstValue("tickets");
 	        String travelClass = form.getFirstValue("travelClass");
 	        String trainId2 = form.getFirstValue("trainID2");
 
-	        try (Connection connection = DriverManager.getConnection(JDBC_URL)) {
+	        try (Connection connection = DriverManager.getConnection(Constants.JDBC_URL)) {
 	            // Check if there are enough available seats for the specified travel class
 	            if (checkSeatsAvailability(connection, trainId, Integer.parseInt(nbOfTickets), travelClass) & checkSeatsAvailability(connection, trainId2, Integer.parseInt(nbOfTickets), travelClass)) {
 	                // Update the reservation based on the train ID
