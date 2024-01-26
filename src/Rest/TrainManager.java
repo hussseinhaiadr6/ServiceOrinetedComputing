@@ -11,32 +11,30 @@ import org.restlet.resource.Post;
 import org.restlet.resource.ServerResource;
 import java.sql.*;
 public class TrainManager extends ServerResource{
-	private RouterApplication app = (RouterApplication) getApplication();
 
 	 @Post
 	    public Representation reserveTickets(Representation entity) {			
-	        String trainId = (String) getRequestAttributes().get("TrainID");
+	        String outboundTrainId = (String) getRequestAttributes().get("outboundTrainID");
+	        
 	        Form form = new Form(entity);
 	        String nbOfTickets = form.getFirstValue("tickets");
 	        String travelClass = form.getFirstValue("travelClass");
-	        String trainId2 = form.getFirstValue("trainID2");
+	        String returnTrainID = form.getFirstValue("returnTrainID");
+	        String ticketType = form.getFirstValue("ticketType");
 
 	        try (Connection connection = DriverManager.getConnection(Constants.JDBC_URL)) {
 	            // Check if there are enough available seats for the specified travel class
-	            if (checkSeatsAvailability(connection, trainId, Integer.parseInt(nbOfTickets), travelClass) & checkSeatsAvailability(connection, trainId2, Integer.parseInt(nbOfTickets), travelClass)) {
+	            if (checkSeatsAvailability(connection, outboundTrainId, Integer.parseInt(nbOfTickets), travelClass) & checkSeatsAvailability(connection, returnTrainID, Integer.parseInt(nbOfTickets), travelClass)) {
 	                // Update the reservation based on the train ID
-	                updateReservation(connection, trainId, Integer.parseInt(nbOfTickets), travelClass);
-	                updateReservation(connection, trainId2, Integer.parseInt(nbOfTickets), travelClass);
-	                return new StringRepresentation("Reservation successful", MediaType.TEXT_PLAIN);
-	            } else {
-	                return new StringRepresentation("Not enough available seats for the specified class", MediaType.TEXT_PLAIN);
-	            }
-	            
-
+	                updateReservation(connection, outboundTrainId, Integer.parseInt(nbOfTickets), travelClass);
+	                updateReservation(connection, returnTrainID, Integer.parseInt(nbOfTickets), travelClass);
+		            return new StringRepresentation("true",  MediaType.TEXT_PLAIN);
+	            } 
 	        } catch (SQLException e) {
 	            e.printStackTrace();
-	            return new StringRepresentation("Error processing reservation",  MediaType.TEXT_PLAIN);
 	        }
+	        
+            return new StringRepresentation("false",  MediaType.TEXT_PLAIN);
 	    }
 
 	    private boolean checkSeatsAvailability(Connection connection, String trainId, int numberOfTickets, String travelClass) throws SQLException {
@@ -81,8 +79,8 @@ public class TrainManager extends ServerResource{
 	        	else
 	            	Result=" error ";
 	        
-	    System.out.println(" the result is :"+ Result);
-	    return Result;
+		    System.out.println(" the result is :"+ Result);
+		    return Result;
 	    }
 
 }

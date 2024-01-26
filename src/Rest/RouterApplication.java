@@ -13,7 +13,7 @@ public class RouterApplication extends Application{
 		Router router = new Router(getContext());
 		
 		router.attach("/train", TrainResource.class);
-		router.attach("/train/{TrainID}",TrainManager.class);
+		router.attach("/reservation/{outboundTrainID}",TrainManager.class);
 				
         return router;
      }

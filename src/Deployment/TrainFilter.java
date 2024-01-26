@@ -44,8 +44,6 @@ public class TrainFilter {
 				}
 			} else {
 				return "User is not logged in";
-			}
-			
-//		    return Client.ClientCall.FilterTrains("StationA","StationB","2023-01-01","2023-01-01","2","FIRST");
+			}			
 		}
 }

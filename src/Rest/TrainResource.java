@@ -32,11 +32,11 @@ public class TrainResource extends ServerResource {
 			System.out.println("Connected to the database");
 			ResultSet resultSet = statement.executeQuery("SELECT * FROM train");
             while (resultSet.next()) {
-            	result = result + stringifyTrainRecord(resultSet);
+            	result = result + stringifyTrainRecord(resultSet, null);
 		    }
         } catch (SQLException e) {
 			e.printStackTrace();
-		}	
+		}
 		
 		return new StringRepresentation(result,MediaType.TEXT_PLAIN);
 	}
@@ -44,14 +44,14 @@ public class TrainResource extends ServerResource {
 	@Post
 	public Representation filterTrains(Representation entity) {
 		String result = "";
-			
+
 		Form form = new Form(entity);
 		String departureStation = form.getFirstValue("departureStation");
 		String arrivalStation = form.getFirstValue("arrivalStation");
 		String departureDate = form.getFirstValue("departureDate");
 		String arrivalDate = form.getFirstValue("arrivalDate");
-//		int tickets= Integer.parseInt(form.getFirstValue("tickets"));
-//		String ticketClass= form.getFirstValue("travelClass");
+		String tickets = form.getFirstValue("tickets");
+		String travelClass = form.getFirstValue("travelClass");
 		            
 		try (Connection connection = DriverManager.getConnection(Constants.JDBC_URL);
 				Statement statement = connection.createStatement()) {
@@ -60,14 +60,20 @@ public class TrainResource extends ServerResource {
 				  "SELECT * FROM train " +
 			                "WHERE (departureStation = '" + departureStation + "' " +
 			                "AND arrivalStation = '" + arrivalStation + "' " +
-			                "AND arrival_date = '" + departureDate + "') " +
+			                "AND arrival_date = '" + departureDate + "' " +
+			                "AND " + getColumnNameForTravelClass(travelClass) + " >= '" + tickets + "') " +
 			                "OR " +
 			                "(departureStation = '" + arrivalStation + "' " +
 			                "AND arrivalStation = '" + departureStation + "' " +
-			                "AND arrival_date = '" + arrivalDate + "')");
-			  				  
-			while (resultSet.next()) {
-			 	result = result + stringifyTrainRecord(resultSet);
+			                "AND arrival_date = '" + arrivalDate + "' " +
+							"AND " + getColumnNameForTravelClass(travelClass) + " >= '" + tickets + "') ");
+			
+			if (!resultSet.next()) {
+				result = "No available trains.";
+			} else {
+				do {
+				 	result = result + stringifyTrainRecord(resultSet, travelClass);
+				} while (resultSet.next());
 			}
 		 } catch (SQLException e) {
 			 	e.printStackTrace();
@@ -77,7 +83,7 @@ public class TrainResource extends ServerResource {
     }
 
 	// Convert a train database record into a string 
-	private String stringifyTrainRecord(ResultSet resultSet) {
+	private String stringifyTrainRecord(ResultSet resultSet, String travelClass) {
 		String result = "";
 		
 		try {
@@ -87,18 +93,52 @@ public class TrainResource extends ServerResource {
 							+ "Departure Date: " + resultSet.getString("departure_date") + "\n"
 							+ "Departure Time: " + resultSet.getString("departure_time") + "\n"
 							+ "Arrival Date: " + resultSet.getString("arrival_date") + "\n"
-							+ "Arrival Time: " + resultSet.getString("arrival_time") + "\n"
-							+ "First Class Seats: " + resultSet.getInt("firstClassSeats") + "\n"
-							+ "Business Class Seats: " + resultSet.getInt("businessClassSeats") + "\n"
-							+ "Standard Class Seats: " + resultSet.getInt("standardClassSeats") + "\n"
-							+ "First Class Fares: " + resultSet.getDouble("firstClassFares") + "\n"
-            				+ "Business Class Fares: " + resultSet.getDouble("businessClassFares") + "\n"
-            				+ "Standard Class Fares: " + resultSet.getDouble("standardClassFares") + "\n"
-            				+"-------------------------------------------"+"\n"+"\n"+"\n"; 
+							+ "Arrival Time: " + resultSet.getString("arrival_time") + "\n";
+			if (travelClass == null) {
+				result = result + "First Class Seats: " + resultSet.getInt("firstClassSeats") + "\n"
+								+ "Business Class Seats: " + resultSet.getInt("businessClassSeats") + "\n"
+								+ "Standard Class Seats: " + resultSet.getInt("standardClassSeats") + "\n"
+								+ "First Class Non-Flexible Fares: " + resultSet.getDouble("firstClassFares") + "\n"
+		        				+ "Business Class Non-Flexible Fares: " + resultSet.getDouble("businessClassFares") + "\n"
+		        				+ "Standard Class Non-Flexible Fares: " + resultSet.getDouble("standardClassFares") + "\n"
+								+ "First Class Flexible Fares: " + (resultSet.getDouble("firstClassFares") + 30) + "\n"
+								+ "Business Class Flexible Fares: " + (resultSet.getDouble("businessClassFares") + 30) + "\n"
+								+ "Standard Class Flexible Fares: " + (resultSet.getDouble("standardClassFares") + 30) + "\n";
+			} else if (travelClass.contentEquals("FIRST")) {
+				result = result + "First Class Seats: " + resultSet.getInt("firstClassSeats") + "\n"
+								+ "First Class Non-Flexible Fares: " + resultSet.getDouble("firstClassFares") + "\n"
+								+ "First Class Flexible Fares: " + (resultSet.getDouble("firstClassFares") + 30) + "\n";
+			}  else if (travelClass.contentEquals("BUSINESS")) {
+	        	result = result + "Business Class Seats: " + resultSet.getInt("businessClassSeats") + "\n"
+        						+ "Business Class Non-Flexible Fares: " + resultSet.getDouble("businessClassFares") + "\n"
+        						+ "Business Class Flexible Fares: " + (resultSet.getDouble("businessClassFares") + 30) + "\n";
+	    	} else if (travelClass.contentEquals("STANDARD")) {
+	        	result = result + "Standard Class Seats: " + resultSet.getInt("standardClassSeats") + "\n"
+								+ "Standard Class Non-Flexible Fares: " + resultSet.getDouble("standardClassFares") + "\n"
+								+ "Standard Class Flexible Fares: " + (resultSet.getDouble("standardClassFares") + 30) + "\n";
+	    	}
+			
+            result = result + "-------------------------------------------\n\n\n"; 
 		} catch (SQLException e) {
 			 e.printStackTrace();
 		}
 		
         return result;
 	}
+	
+    private String getColumnNameForTravelClass(String travelClass) {
+    	String result = "";
+    	if (travelClass.contentEquals("FIRST")) {
+        	result = "firstClassSeats";
+    	} else if (travelClass.contentEquals("BUSINESS")) {
+        	result = "businessClassSeats";
+    	} else if (travelClass.contentEquals("STANDARD")) {
+        	result = "standardClassSeats";
+    	} else {
+        	result= "standardClassSeats";
+    	}
+        
+	    System.out.println(" the result is :"+ result);
+	    return result;
+    }
 }  

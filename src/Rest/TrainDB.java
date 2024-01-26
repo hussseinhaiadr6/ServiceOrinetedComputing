@@ -39,7 +39,7 @@ public class TrainDB {
                 addTrain(preparedStatement, "T004", "StationB", "StationA", "2023-02-02", "12:00", "14:00",
                         "2023-01-02", "60,40,120","140,150,180");
 
-                System.out.println("Three trains added to the database");
+                System.out.println("4 trains added to the database");
 
                 // Display the trains
                 displayTrains(connection);
