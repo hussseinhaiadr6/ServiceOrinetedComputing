@@ -4,7 +4,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class SQLiteDatabaseCreator {
+public class SQLiteTrainDatabaseCreator {
 
     public static void main(String[] args) {
         try {
@@ -40,21 +40,8 @@ public class SQLiteDatabaseCreator {
                     "businessClassFares REAL NOT NULL," +
                     "standardClassFares REAL NOT NULL)";
 
-            
-
              statement.executeUpdate(createTrainTableQuery);
              System.out.println("Table 'train' created");
-       
-             // Drop the 'train' table if it exists
-             statement.executeUpdate("DROP TABLE IF EXISTS users");
-
-             // Create the 'users' table
-             String createUsersTableQuery = "CREATE TABLE users (" +
-            		 "username TEXT PRIMARY KEY," +
-            		 "password TEXT NOT NULL," +
-            		 "isLogged INTEGER NOT NULL)";
-             statement.executeUpdate(createUsersTableQuery);
-             System.out.println("Table 'users' created");
 
         } catch (SQLException e) {
             System.err.println(e.getMessage()); 

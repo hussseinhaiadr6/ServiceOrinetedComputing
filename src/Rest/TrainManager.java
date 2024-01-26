@@ -14,12 +14,7 @@ public class TrainManager extends ServerResource{
 	private RouterApplication app = (RouterApplication) getApplication();
 
 	 @Post
-	    public Representation reserveTickets(Representation entity) {
-			if (!app.authenticate(getRequest(), getResponse())) {
-	            // Not authenticated
-	            return new StringRepresentation("Please authenticate to make a booking.", MediaType.TEXT_PLAIN); 
-	        }
-			
+	    public Representation reserveTickets(Representation entity) {			
 	        String trainId = (String) getRequestAttributes().get("TrainID");
 	        Form form = new Form(entity);
 	        String nbOfTickets = form.getFirstValue("tickets");

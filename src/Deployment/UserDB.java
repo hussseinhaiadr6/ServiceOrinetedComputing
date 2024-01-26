@@ -1,4 +1,4 @@
-package Rest;
+package Deployment;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -7,17 +7,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class UsersDB {
+public class UserDB {
 	private static Connection connection;
 	
-	public UsersDB() {
-		if (connection == null) {
-			try {
-				connection = DriverManager.getConnection(Constants.JDBC_URL);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
+	public UserDB() {
+		
+		initConnection();
 	}
 	
 	public static boolean addUser(String username, String password) {
@@ -138,9 +133,19 @@ public class UsersDB {
 	}
 		
 	private static void initConnection() {
+
         if (connection == null) {
+
+    		try {
+                Class.forName("org.sqlite.JDBC");
+            } catch (ClassNotFoundException e) {
+                System.err.println("SQLite JDBC Driver not found.");
+                e.printStackTrace();
+                return;
+            }
+    		
         	try {
-    			connection = DriverManager.getConnection(Constants.JDBC_URL);
+    			connection = DriverManager.getConnection(Constants.JDBC_USERS_DB_URL);
     		} catch (SQLException e) {
     			e.printStackTrace();
     		}
@@ -148,13 +153,6 @@ public class UsersDB {
 	}
 	
     public static void main(String[] args) {
-        try {
-            Class.forName("org.sqlite.JDBC");
-        } catch (ClassNotFoundException e) {
-            System.err.println("SQLite JDBC Driver not found.");
-            e.printStackTrace();
-            return;
-        }
 
         initConnection();
         
@@ -171,6 +169,5 @@ public class UsersDB {
         }
 
         displayUsers();
-        RouterApplication.displayAuthenticatorVerifierLocalSecrets();
     }
 }

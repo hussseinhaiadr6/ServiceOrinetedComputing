@@ -14,16 +14,10 @@ import org.restlet.resource.Post;
 import org.restlet.resource.ServerResource; 
 
 public class TrainResource extends ServerResource { 
-	private RouterApplication app = (RouterApplication) getApplication();
 
 	@Get  
 	public Representation getAllTrains() {
 		String result = "";
-		
-		if (!app.authenticate(getRequest(), getResponse())) {
-            // Not authenticated
-            return new StringRepresentation("Please log in to see all the available trains", MediaType.TEXT_PLAIN); 
-        }
 		
 		try {
 			Class.forName("org.sqlite.JDBC");
@@ -49,11 +43,6 @@ public class TrainResource extends ServerResource {
 	
 	@Post
 	public Representation filterTrains(Representation entity) {
-		if (!app.authenticate(getRequest(), getResponse())) {
-            // Not authenticated
-            return new StringRepresentation("Please log in to filter the trains", MediaType.TEXT_PLAIN); 
-        }
-		
 		String result = "";
 			
 		Form form = new Form(entity);

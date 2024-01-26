@@ -36,7 +36,16 @@ public class TrainFilter {
 				return "Please choose a travelClass.";
 			}
 			      
+			if (UserDB.isUserLoggedIn(username)) {
+				if (UserDB.validateCredentials(username, password)) {
+					return Client.ClientCall.FilterTrains(departureStation, arrivalStation, departureDate, arrivalDate, tickets, travelClass);
+				} else {
+					return "Username or password are not invalid";
+				}
+			} else {
+				return "User is not logged in";
+			}
+			
 //		    return Client.ClientCall.FilterTrains("StationA","StationB","2023-01-01","2023-01-01","2","FIRST");
-			return Client.ClientCall.FilterTrains(username, password, departureStation, arrivalStation, departureDate, arrivalDate, tickets, travelClass);
 		}
 }

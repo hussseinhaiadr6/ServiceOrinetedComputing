@@ -12,16 +12,14 @@ public class Client2Call {
 	/**
 	 * @param args
 	 */
-	public static String reserveTrains(String username, String password, String id1, String id2, String ticketsNo, String travelClass) {        
+	public static String reserveTrains(String id1, String id2, String tickets, String travelClass) {        
         // Create the client resource
         ClientResource resource = new ClientResource("http://localhost:8198/train/" + id1);
         Form form = new Form();
-        form.add("tickets", ticketsNo);
+        form.add("tickets", tickets);
         form.add("travelClass", travelClass);
-        form.add("trainID", id2);
-        
-        resource.setChallengeResponse(ChallengeScheme.HTTP_BASIC, username, password);
-        
+        form.add("trainID2", id2);
+                
         try {
             // Create a form with the needed information
             // Send a POST request with the form

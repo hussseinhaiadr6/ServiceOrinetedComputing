@@ -2,9 +2,7 @@ package Client;
  
 import java.io.IOException;
 
-import org.restlet.data.ChallengeScheme;
 import org.restlet.data.Form;
-import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
 import org.restlet.resource.ResourceException;
  
@@ -12,12 +10,10 @@ public class ClientCall {
 	/**
 	 * @param args
 	 */
-	public static String FilterTrains(String username, String password, String departureStation, String arrivalStation, String departureDate, String arrivalDate, String tickets, String travelClass) {
+	public static String FilterTrains(String departureStation, String arrivalStation, String departureDate, String arrivalDate, String tickets, String travelClass) {
         // Create the client resource
         ClientResource resource = new ClientResource("http://localhost:8198/train");
-        
-        resource.setChallengeResponse(ChallengeScheme.HTTP_BASIC, username, password);
-        
+                
         Form form = new Form();
         form.add("departureStation", departureStation);
         form.add("arrivalStation", arrivalStation);
@@ -35,7 +31,6 @@ public class ClientCall {
         	return response;
         } catch (ResourceException e) {
             e.printStackTrace();
-            return "401 Unauthorized - Incorrect username or password";
         } catch (IOException e) {
             e.printStackTrace();
         }
